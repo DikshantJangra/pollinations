@@ -209,6 +209,19 @@ const models = [
 		output_modalities: ["text"],
 		tools: true
 	},
+	{
+		name: "elixposearch",
+		description: "ElixPose Search Engine",
+		config: portkeyConfig["elixposearch-endpoint"],
+		transform: createSystemPromptTransform(BASE_PROMPTS.conversational),
+		provider: "elixpose",
+		tier: "anonymous",
+		community: false,
+		aliases: ["searchgpt"],
+		input_modalities: ["text"],
+		output_modalities: ["text"],
+		tools: true
+	},
 	// {
 	// 	name: "geminisearch",
 	//
