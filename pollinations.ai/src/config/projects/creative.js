@@ -399,13 +399,13 @@ export const creativeProjects = [
     order: 1
   },
   {
-    name: "Imagen",
+    name: "Imagen - AI Image Generator Web UI 🎨",
     url: "https://altkriz.github.io/imagen/",
-    description: "A beautiful web interface for generating images using Pollinations.ai API with only the \"flux\" and \"turbo\" models.",
+    description: "A beautiful, open-source web interface for generating AI images using the Pollinations.ai API. It provides a user-friendly alternative to the default Pollinations interface, featuring a modern design, local history storage, and focused access to the \"flux\" and \"turbo\" models. Users can generate, download, and manage their AI creations with adjustable parameters like dimensions, seed, and optional prompt enhancement.",
     author: "@altkriz",
     repo: "https://github.com/altkriz/imagen",
     stars: 3,
-    submissionDate: "2025-04-13",
+    submissionDate: "2025-09-17",
     order: 1
   },
   {
@@ -550,16 +550,6 @@ export const creativeProjects = [
     description: "Uses Flux (through pollinations) and potrace to create B&W Vector files",
     author: "@pointsguy118",
     submissionDate: "2025-04-15",
-    order: 1
-  },
-  {
-    name: "Imagen",
-    url: "https://altkriz.github.io/imagen/",
-    description: "A beautiful web interface for generating images using Pollinations.ai API with only the \"flux\" and \"turbo\" models.",
-    author: "@altkriz",
-    repo: "https://github.com/altkriz/imagen",
-    stars: 3,
-    submissionDate: "2025-04-13",
     order: 1
   },
   {
