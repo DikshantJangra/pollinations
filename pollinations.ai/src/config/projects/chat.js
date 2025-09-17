@@ -5,6 +5,15 @@
 
 export const chatProjects = [
   {
+    name: "Pollinations OpenAI Proxy",
+    url: "https://pollinationsopenaiproxy.vercel.app/",
+    description: "A thin FastAPI layer that exposes OpenAI-compatible endpoints and proxies to Pollinations services (https://pollinations.ai/) for text, image, and audio (TTS). Works with existing OpenAI SDKs/clients.",
+    author: "@percival-de-galles",
+    repo: "https://github.com/percival-de-galles/pollinations_openai_proxy",
+    submissionDate: "2025-09-17",
+    order: 1
+  },
+  {
     name: "チャットGPT 日本語 🇯🇵",
     url: "https://chatgpt-jp.org/",
     description: "チャットGPT 日本語無料版 (Free Japanese version of ChatGPT)",
