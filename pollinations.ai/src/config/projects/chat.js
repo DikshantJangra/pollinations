@@ -5,6 +5,15 @@
 
 export const chatProjects = [
   {
+    name: "LLMS 💬",
+    url: "https://yassineabou.github.io/LLMs-Wasm/",
+    description: "A Kotlin Multiplatform application bringing AI to Android, iOS, Desktop, and WebAssembly platforms. Features chat interfaces with history preservation, AI image generation via Pollinations API, local storage, and cross-device synchronization with Google Authentication. Built with Compose Multiplatform for adaptive UIs across all devices.",
+    author: "@yassineAbou",
+    repo: "https://github.com/yassineAbou/LLMS",
+    submissionDate: "2025-09-19",
+    order: 1
+  },
+  {
     name: "チャットGPT 日本語 🇯🇵",
     url: "https://chatgpt-jp.org/",
     description: "チャットGPT 日本語無料版 (Free Japanese version of ChatGPT)",
