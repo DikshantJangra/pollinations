@@ -1,6 +1,10 @@
 import fetch from "node-fetch";
 import fs from "fs/promises";
 import debug from "debug";
+import dotenv from "dotenv";
+
+// Initialize dotenv to load environment variables
+dotenv.config();
 
 const log = debug("pollinations:google-auth");
 const errorLog = debug("pollinations:google-auth:error");

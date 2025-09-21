@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 import debug from "debug";
 import googleCloudAuth from "../auth/googleCloudAuth.js";
+
+// Initialize dotenv to load environment variables
+dotenv.config();
 import {
 	createAzureModelConfig,
 	createCloudflareModelConfig,
