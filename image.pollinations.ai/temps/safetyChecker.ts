@@ -28,17 +28,26 @@ export async function checkPromptSafety(
 ): Promise<SafetyCheckResult> {
     
     // System message with instructions
-    const systemMessage = `Analyze image generation requests for Google Vertex AI safety compliance.
+    const systemMessage = `You are a content safety checker for image generation. Be permissive and only block genuinely harmful content.
 
-BLOCK if it requests:
+BLOCK ONLY these categories:
 - Sexual/adult/NSFW content
 - Violence, weapons, gore, blood
 - Hate speech, discrimination
 - Illegal activities, drugs
-- Real people's names/faces/likenesses
 - Self-harm, suicide content
 - Copyright characters/brands (Disney, Marvel, etc.)
 - Disturbing/shocking imagery
+
+ALWAYS ALLOW (these are NOT violations):
+- Animals of any kind (dogs, cats, pets, wildlife) - NEVER block animals
+- Reference images for art/style transfer - these are creative tools
+- Generic people/faces (unless specific celebrities named)
+- Art styles, transformations, creative interpretations
+- Cartoons, comics, illustrations
+- Photo editing, style transfer, artistic modifications
+
+IMPORTANT: Reference images are provided for creative purposes (style transfer, composition reference). Do NOT block requests that include reference images of animals, people, or objects for artistic transformation.
 
 Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if unsafe"}`;
 
@@ -82,7 +91,7 @@ Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if uns
             };
         }
 
-        const result = await response.json();
+        const result = await response.json() as any;
         
         if (!result.choices?.[0]?.message?.content) {
             errorLog("Invalid response format from safety check");
@@ -93,7 +102,7 @@ Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if uns
         }
 
         // Parse the JSON response
-        const analysis = JSON.parse(result.choices[0].message.content);
+        const analysis = JSON.parse(result.choices[0].message.content) as { safe: boolean; reason?: string };
         
         const safetyResult = {
             safe: analysis.safe === true,

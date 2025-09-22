@@ -28,17 +28,17 @@ export async function checkPromptSafety(
 ): Promise<SafetyCheckResult> {
     
     // System message with instructions
-    const systemMessage = `Analyze image generation requests for Google Vertex AI safety compliance.
+    const systemMessage = `Analyze image generation requests.
 
-BLOCK if it requests:
+"safe": false if
 - Sexual/adult/NSFW content
 - Violence, weapons, gore, blood
 - Hate speech, discrimination
 - Illegal activities, drugs
-- Real people's names/faces/likenesses
 - Self-harm, suicide content
-- Copyright characters/brands (Disney, Marvel, etc.)
 - Disturbing/shocking imagery
+
+Don't be too strict if in doubt
 
 Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if unsafe"}`;
 
