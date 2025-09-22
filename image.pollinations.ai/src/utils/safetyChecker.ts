@@ -30,17 +30,17 @@ export async function checkPromptSafety(
     // System message with instructions
     const systemMessage = `Analyze image generation requests.
 
-"safe": false if
-- Sexual/adult/NSFW content
-- Violence, weapons, gore, blood
-- Hate speech, discrimination
-- Illegal activities, drugs
-- Self-harm, suicide content
-- Disturbing/shocking imagery
+fails safety check ONLY if
+- 1) Sexual/adult/NSFW content
+- 2) Violence, weapons, gore, blood
+- 3) Hate speech, discrimination
+- 4) Illegal activities, drugs
+- 5) Self-harm, suicide content
+- 6) Disturbing/shocking imagery
 
-Don't be too strict if in doubt
+Don't be strict. If in doubt, be permissive
 
-Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if unsafe"}`;
+Respond ONLY with JSON: {"safe": true/false, "reason": "category number and reason. explain what in the prompt/image is unsafe"}`;
 
     // User message with content to analyze
     const userContent = [
@@ -65,7 +65,7 @@ Respond ONLY with JSON: {"safe": true/false, "reason": "brief explanation if uns
             body: JSON.stringify({
                 model: 'openai-fast',
                 messages: [
-                    { role: 'system', content: systemMessage },
+                    { role: 'use', content: systemMessage },
                     { role: 'user', content: userContent }
                 ],
                 max_tokens: 100,
