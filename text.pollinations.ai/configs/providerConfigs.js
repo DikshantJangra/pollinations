@@ -218,3 +218,16 @@ export function createBedrockLambdaModelConfig(additionalConfig = {}) {
 		...additionalConfig,
 	};
 }
+
+/**
+ * Creates a Higgs audio model configuration
+ * @param {Object} additionalConfig - Additional configuration to merge with base config
+ * @returns {Object} - Higgs audio model configuration
+ */
+export function createHiggsAudioModelConfig(additionalConfig = {}) {
+	return {
+		provider: "openai",
+		"custom-host": "http://51.159.143.95:8000/v1",
+		...additionalConfig,
+	};
+}

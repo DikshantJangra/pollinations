@@ -121,6 +121,16 @@ const MODEL_COST = {
 	  region: "us-east-1",
 	  prompt_text: 0.22,
 	  completion_text: 0.22
+	},
+	
+	// ===== Community Models ===== 
+	"higgs-audio": {
+	  provider: "higgs-audio",
+	  region: "eu-west-3",
+	  prompt_text: 0.0,
+	  completion_text: 0.0,
+	  prompt_audio: 0.0,
+	  completion_audio: 0.0
 	}
   };
 

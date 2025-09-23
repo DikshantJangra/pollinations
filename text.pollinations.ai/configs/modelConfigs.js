@@ -15,6 +15,7 @@ import {
 	createDeepSeekModelConfig,
 	createDeepSeekReasoningConfig,
 	createApiNavyModelConfig,
+	createHiggsAudioModelConfig,
 } from "./providerConfigs.js";
 
 const log = debug("pollinations:portkey");
@@ -356,4 +357,6 @@ export const portkeyConfig = {
 	"mistral.mistral-small-2402-v1:0": () => createBedrockLambdaModelConfig({
 		model: "mistral.mistral-small-2402-v1:0",
 	}),
+	// Higgs Audio model configuration (by elixpo and itachi)
+	"higgs-audio": () => createHiggsAudioModelConfig(),
 };

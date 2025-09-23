@@ -147,6 +147,25 @@ const models = [
 		tools: true
 	},
 	{
+		name: "higgs",
+		description: "Higgs Audio Model (by elixpo & itachi) 🎵",
+		voices: [
+			"echo",
+			"alloy",
+			"fable",
+			"onyx",
+			"nova",
+			"shimmer",
+		],
+		config: portkeyConfig["higgs-audio"],
+		tier: "seed",
+		community: true,
+		aliases: ["higgs-audio"],
+		input_modalities: ["text"],
+		output_modalities: ["audio", "text"],
+		tools: true
+	},
+	{
 		name: "nova-fast",
 		description: "Amazon Nova Micro",
 		config: portkeyConfig["amazon.nova-micro-v1:0"],
