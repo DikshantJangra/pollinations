@@ -47,7 +47,8 @@ export function resolveModelConfig(messages, options) {
             model: actualModelName,
             modelConfig: config,
             modelDef: modelDef,
-            virtualModelName: virtualModelName
+            // Ensure virtualModelName is the canonical model name from availableModels
+            virtualModelName: modelDef?.name || virtualModelName
         }
     };
     
@@ -56,4 +57,3 @@ export function resolveModelConfig(messages, options) {
     
     return result;
 }
-
