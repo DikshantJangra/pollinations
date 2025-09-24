@@ -5,6 +5,15 @@
 
 export const creativeProjects = [
   {
+    name: "🇪🇸 mayaAI",
+    url: "https://mayaia.pages.dev/",
+    description: "Maya ia es una inteligencia artificial para generar imagenes usando pollinations api (Maya AI is an artificial intelligence for generating images using the Pollinations API)",
+    author: "https://mayaia.pages.dev/contacto",
+    submissionDate: "2025-09-24",
+    language: "es-ES",
+    order: 1
+  },
+  {
     name: "Prompt2Image 🎨",
     url: "https://marketplace.visualstudio.com/items?itemName=MaazSaboowala.prompt2image-ai-generator",
     description: "Prompt2Image is a Visual Studio Code extension that brings AI-powered image generation directly into the developer workflow. Instead of searching for stock photos or managing downloads, developers can simply open the VS Code Command Palette, enter a descriptive text prompt, and instantly receive a high-quality, project-ready image. The extension integrates seamlessly with Pollinations.ai, which processes the prompt through its AI generation API to create tailored, web-optimized visuals.",
