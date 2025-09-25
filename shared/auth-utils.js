@@ -243,10 +243,102 @@ export async function isUserDomainAllowedFromDb(
 }
 
 /**
+ * Extract enter token from request headers
+ * @param {Request|Object} req - The request object
+ * @returns {string|null} The enter token if present
+ */
+function extractEnterToken(req) {
+	// Check for x-enter-token header
+	const headers = req.headers || {};
+	return headers['x-enter-token'] || headers['X-Enter-Token'] || null;
+}
+
+/**
+ * Extract GitHub user ID from request headers
+ * @param {Request|Object} req - The request object
+ * @returns {string|null} The GitHub user ID if present
+ */
+function extractGithubUserId(req) {
+	// Check for x-github-id header
+	const headers = req.headers || {};
+	return headers['x-github-id'] || headers['X-Github-Id'] || null;
+}
+
+/**
+ * Validate enter token against environment variable
+ * @param {string} enterToken - The enter token to validate
+ * @returns {boolean} Whether the enter token is valid
+ */
+function validateEnterToken(enterToken) {
+	if (!enterToken) return false;
+	
+	const validEnterToken = process.env.ENTER_TOKEN;
+	if (!validEnterToken) {
+		log("ENTER_TOKEN environment variable not set");
+		return false;
+	}
+	
+	return enterToken === validEnterToken;
+}
+
+/**
+ * Get user tier from GitHub user ID via auth.pollinations.ai API
+ * @param {string} githubUserId - The GitHub user ID
+ * @returns {Promise<{userId: string, username: string, tier: string}|null>} User info if found, null otherwise
+ */
+async function _getUserTierFromGithubId(githubUserId) {
+	if (!githubUserId) return null;
+
+	try {
+		log(`Getting user tier for GitHub ID: ${githubUserId}`);
+		
+		// Query the auth.pollinations.ai API to get user info by GitHub ID
+		const apiUrl = `https://auth.pollinations.ai/admin/user-info?github_id=${encodeURIComponent(githubUserId)}`;
+		log(`Calling API: ${apiUrl}`);
+
+		const response = await fetch(apiUrl, {
+			headers: {
+				'Authorization': `Bearer ${process.env.ADMIN_API_KEY}`,
+				'Accept': 'application/json'
+			}
+		});
+
+		if (!response.ok) {
+			log(`API returned error status: ${response.status}`);
+			return null;
+		}
+
+		const data = await response.json();
+		log("API response:", data);
+
+		if (data && data.user_id) {
+			log(`✅ Found user ${data.user_id} (${data.username}) with tier ${data.tier} for GitHub ID ${githubUserId}`);
+			return {
+				userId: data.user_id,
+				username: data.username || data.user_id,
+				tier: data.tier || 'seed'
+			};
+		} else {
+			log(`❌ No user found for GitHub ID ${githubUserId}`);
+			return null;
+		}
+	} catch (error) {
+		log("Error getting user tier from GitHub ID:", error);
+		return null;
+	}
+}
+
+// Memoized version with 30 second TTL
+const getUserTierFromGithubId = memoizee(_getUserTierFromGithubId, {
+	maxAge: 30000, // 30 seconds
+	promise: true, // Handle async functions properly
+});
+
+/**
  * Determine if request is authenticated
  * @param {Request|Object} req - The request object
  * @param {Object} ctx - Context object (currently unused but kept for future extensibility)
- * @returns {{authenticated: boolean, tokenAuth: boolean, referrerAuth: boolean, bypass: boolean, reason: string, userId: string|null, username: string|null, tier: string, debugInfo: Object}} Authentication status, auth type, reason, userId, username if authenticated, and debug info
+ * @returns {{authenticated: boolean, tokenAuth: boolean, referrerAuth: boolean, enterAuth: boolean, bypass: boolean, reason: string, userId: string|null, username: string|null, tier: string, debugInfo: Object}} Authentication status, auth type, reason, userId, username if authenticated, and debug info
  * @throws {Error} If an invalid token is provided
  */
 export async function shouldBypassQueue(req) {
@@ -254,6 +346,8 @@ export async function shouldBypassQueue(req) {
 
 	const token = extractToken(req);
 	const ref = extractReferrer(req);
+	const enterToken = extractEnterToken(req);
+	const githubUserId = extractGithubUserId(req);
 
 	if (token) {
 		tokenLog(
@@ -274,6 +368,18 @@ export async function shouldBypassQueue(req) {
 		referrerLog("No referrer found in request");
 	}
 
+	if (enterToken) {
+		log("Enter token extracted: %s", enterToken.substring(0, 8) + "...");
+	} else {
+		log("No enter token provided in request");
+	}
+
+	if (githubUserId) {
+		log("GitHub user ID extracted: %s", githubUserId);
+	} else {
+		log("No GitHub user ID provided in request");
+	}
+
 	const debugInfo = {
 		token: token
 			? token.length > 8
@@ -282,7 +388,63 @@ export async function shouldBypassQueue(req) {
 			: null,
 		referrer: ref,
 		tokenSource: token ? getTokenSource(req) : null,
+		enterToken: enterToken ? enterToken.substring(0, 8) + "..." : null,
+		githubUserId: githubUserId,
 	};
+
+	// 0️⃣ Enter-token authentication (highest priority - bypasses all other auth)
+	if (enterToken) {
+		log("Validating enter token: %s", debugInfo.enterToken);
+		const isValidEnterToken = validateEnterToken(enterToken);
+		if (isValidEnterToken) {
+			log("✅ Valid enter token found - bypassing normal authentication");
+			
+			// If GitHub user ID is provided, get user info from auth service
+			if (githubUserId) {
+				log("Getting user tier for GitHub ID: %s", githubUserId);
+				const githubUserResult = await getUserTierFromGithubId(githubUserId);
+				if (githubUserResult && githubUserResult.userId) {
+					log("✅ Found GitHub user: %s (tier: %s)", githubUserResult.userId, githubUserResult.tier);
+					debugInfo.authResult = "ENTER_TOKEN_WITH_GITHUB";
+					debugInfo.userId = githubUserResult.userId;
+					debugInfo.username = githubUserResult.username;
+					debugInfo.tier = githubUserResult.tier;
+					return {
+						authenticated: true,
+						tokenAuth: false,
+						referrerAuth: false,
+						enterAuth: true,
+						reason: "ENTER_TOKEN_WITH_GITHUB",
+						...githubUserResult,
+						debugInfo,
+					};
+				} else {
+					log("❌ GitHub user not found, using default tier");
+				}
+			}
+			
+			// Valid enter token but no GitHub user ID or user not found - use default tier
+			debugInfo.authResult = "ENTER_TOKEN";
+			debugInfo.userId = null;
+			debugInfo.username = null;
+			debugInfo.tier = "seed"; // Default tier for enter service
+			log("Authentication succeeded: ENTER_TOKEN (default tier: seed)");
+			return {
+				authenticated: true,
+				tokenAuth: false,
+				referrerAuth: false,
+				enterAuth: true,
+				reason: "ENTER_TOKEN",
+				userId: null,
+				username: null,
+				tier: "seed",
+				debugInfo,
+			};
+		} else {
+			log("❌ Invalid enter token provided");
+			// Continue with normal authentication if enter token is invalid
+		}
+	}
 
 	// 1️⃣ Token-based authentication
 	if (token) {
@@ -308,6 +470,7 @@ export async function shouldBypassQueue(req) {
 				authenticated: true,
 				tokenAuth: true,
 				referrerAuth: false,
+				enterAuth: false,
 				reason: "DB_TOKEN",
 				...tokenResult,
 				debugInfo,
@@ -349,6 +512,7 @@ export async function shouldBypassQueue(req) {
 				authenticated: true,
 				tokenAuth: false,
 				referrerAuth: true,
+				enterAuth: false,
 				reason: "DB_REFERRER",
 				...dbReferrerResult,
 				debugInfo,
@@ -370,6 +534,7 @@ export async function shouldBypassQueue(req) {
 		authenticated: false,
 		tokenAuth: false,
 		referrerAuth: false,
+		enterAuth: false,
 		reason: "NO_AUTH_METHOD_SUCCESS",
 		userId: null,
 		username: null,

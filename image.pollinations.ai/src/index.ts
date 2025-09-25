@@ -356,6 +356,7 @@ const checkCacheAndGenerate = async (
         const authResult = await handleAuthentication(req, requestId, logAuth);
         const isAuthenticated = authResult.authenticated;
         const hasValidToken = authResult.tokenAuth;
+        const hasEnterToken = authResult.enterAuth;
 
         // Cache the generated image
         const bufferAndMaturity = await cacheImagePromise(
@@ -409,22 +410,22 @@ const checkCacheAndGenerate = async (
                 } else if (safeParams.model === "seedream") {
                     queueConfig = { interval: 45000, cap: 1, forceCap: true }; // Force cap=1 regardless of tier
                     logAuth("Seedream model - using forced cap=1 with 45s interval for all users");
-                } else if (hasValidToken) {
-                    // Token authentication for other models - ipQueue will apply tier-based caps
+                } else if (hasValidToken || hasEnterToken) {
+                    // Token or enter-token authentication for other models - ipQueue will apply tier-based caps
                     queueConfig = { interval: 0 }; // cap will be set by ipQueue based on tier
-                    logAuth("Token authenticated - ipQueue will apply tier-based concurrency");
+                    logAuth(hasEnterToken ? "Enter-token authenticated - ipQueue will apply tier-based concurrency" : "Token authenticated - ipQueue will apply tier-based concurrency");
                 } else {
                     // Use default queue config for other models with no token
                     queueConfig = QUEUE_CONFIG;
                     logAuth("Standard queue with delay (no token)");
                 }
                 
-                if (hasValidToken) {
+                if (hasValidToken || hasEnterToken) {
                     progress.updateBar(
                         requestId,
                         20,
                         "Authenticated",
-                        "Token verified",
+                        hasEnterToken ? "Enter token verified" : "Token verified",
                     );
                 }
 

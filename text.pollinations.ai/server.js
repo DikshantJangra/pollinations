@@ -596,14 +596,15 @@ async function processRequest(req, res, requestData) {
 	// Use the new explicit authentication fields
 	const isTokenAuthenticated = authResult.tokenAuth;
 	const hasReferrer = authResult.referrerAuth;
+	const hasEnterToken = authResult.enterAuth;
 
 	// Determine queue configuration based on authentication
 	// Note: ipQueue.js now handles tier-based cap logic automatically for token auth
 	let queueConfig;
-	if (isTokenAuthenticated) {
-		// Token authentication - ipQueue will automatically apply tier-based caps
+	if (isTokenAuthenticated || hasEnterToken) {
+		// Token or enter-token authentication - ipQueue will automatically apply tier-based caps
 		queueConfig = { interval: 1000 }; // cap will be set by ipQueue based on tier
-		authLog("Token authenticated - ipQueue will apply tier-based concurrency");
+		authLog(hasEnterToken ? "Enter-token authenticated - ipQueue will apply tier-based concurrency" : "Token authenticated - ipQueue will apply tier-based concurrency");
 	} else if (hasReferrer) {
 		// Referrer authentication uses base configuration
 		queueConfig = { interval: 3000 };
