@@ -293,7 +293,7 @@ async function _getUserTierFromGithubId(githubUserId) {
 		log(`Getting user tier for GitHub ID: ${githubUserId}`);
 		
 		// Query the auth.pollinations.ai API to get user info by GitHub ID
-		const apiUrl = `https://auth.pollinations.ai/admin/user-info?github_id=${encodeURIComponent(githubUserId)}`;
+		const apiUrl = `https://auth.pollinations.ai/admin/user-info?user_id=${encodeURIComponent(githubUserId)}`;
 		log(`Calling API: ${apiUrl}`);
 
 		const response = await fetch(apiUrl, {
@@ -311,12 +311,13 @@ async function _getUserTierFromGithubId(githubUserId) {
 		const data = await response.json();
 		log("API response:", data);
 
-		if (data && data.user_id) {
-			log(`✅ Found user ${data.user_id} (${data.username}) with tier ${data.tier} for GitHub ID ${githubUserId}`);
+		if (data && data.user) {
+			const tier = data.userTier ? data.userTier.tier : 'seed';
+			log(`✅ Found user ${data.user.github_user_id} (${data.user.username}) with tier ${tier} for GitHub ID ${githubUserId}`);
 			return {
-				userId: data.user_id,
-				username: data.username || data.user_id,
-				tier: data.tier || 'seed'
+				userId: data.user.github_user_id,
+				username: data.user.username || data.user.github_user_id,
+				tier: tier
 			};
 		} else {
 			log(`❌ No user found for GitHub ID ${githubUserId}`);
@@ -338,7 +339,7 @@ const getUserTierFromGithubId = memoizee(_getUserTierFromGithubId, {
  * Determine if request is authenticated
  * @param {Request|Object} req - The request object
  * @param {Object} ctx - Context object (currently unused but kept for future extensibility)
- * @returns {{authenticated: boolean, tokenAuth: boolean, referrerAuth: boolean, enterAuth: boolean, bypass: boolean, reason: string, userId: string|null, username: string|null, tier: string, debugInfo: Object}} Authentication status, auth type, reason, userId, username if authenticated, and debug info
+ * @returns {{authenticated: boolean, tokenAuth: boolean, referrerAuth: boolean, bypass: boolean, reason: string, userId: string|null, username: string|null, tier: string, debugInfo: Object}} Authentication status, auth type, reason, userId, username if authenticated, and debug info
  * @throws {Error} If an invalid token is provided
  */
 export async function shouldBypassQueue(req) {
@@ -411,9 +412,8 @@ export async function shouldBypassQueue(req) {
 					debugInfo.tier = githubUserResult.tier;
 					return {
 						authenticated: true,
-						tokenAuth: false,
+						tokenAuth: true,
 						referrerAuth: false,
-						enterAuth: true,
 						reason: "ENTER_TOKEN_WITH_GITHUB",
 						...githubUserResult,
 						debugInfo,
@@ -431,9 +431,8 @@ export async function shouldBypassQueue(req) {
 			log("Authentication succeeded: ENTER_TOKEN (default tier: seed)");
 			return {
 				authenticated: true,
-				tokenAuth: false,
+				tokenAuth: true,
 				referrerAuth: false,
-				enterAuth: true,
 				reason: "ENTER_TOKEN",
 				userId: null,
 				username: null,
@@ -470,7 +469,6 @@ export async function shouldBypassQueue(req) {
 				authenticated: true,
 				tokenAuth: true,
 				referrerAuth: false,
-				enterAuth: false,
 				reason: "DB_TOKEN",
 				...tokenResult,
 				debugInfo,
@@ -512,7 +510,6 @@ export async function shouldBypassQueue(req) {
 				authenticated: true,
 				tokenAuth: false,
 				referrerAuth: true,
-				enterAuth: false,
 				reason: "DB_REFERRER",
 				...dbReferrerResult,
 				debugInfo,
@@ -534,7 +531,6 @@ export async function shouldBypassQueue(req) {
 		authenticated: false,
 		tokenAuth: false,
 		referrerAuth: false,
-		enterAuth: false,
 		reason: "NO_AUTH_METHOD_SUCCESS",
 		userId: null,
 		username: null,
