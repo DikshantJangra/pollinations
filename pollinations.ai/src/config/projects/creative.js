@@ -5,6 +5,33 @@
 
 export const creativeProjects = [
   {
+    name: "Nirvana Image Gen AI 🖼️",
+    url: "https://nirvanaimg.vercel.app",
+    description: "Modern web application that generates beautiful images from text prompts in ~22 seconds. Clean interface with fast generation powered by Pollinations AI.",
+    author: "@ez-vivek",
+    repo: "https://github.com/ez-vivek/NirvanaImageGen",
+    submissionDate: "2025-08-30",
+    order: 1
+  },
+  {
+    name: "TaleCrafter AI 📚",
+    url: "https://www.talecrafter.tech/",
+    description: "Interactive storytelling platform that transforms prompts into complete digital storybooks with AI-generated illustrations, text-to-speech narration, and multilingual support (40+ languages). Selected for SRIJAN innovation initiative.",
+    author: "@adityashriwas",
+    repo: "https://github.com/adityashriwas/TaleCrafter-AI",
+    submissionDate: "2025-08-22",
+    order: 1
+  },
+  {
+    name: "Craftify 🎨",
+    url: "https://craftify-alpha.vercel.app/",
+    description: "React-based creative web application for generating unique images from text prompts. Features download/share functionality, responsive design with light/dark themes, and Web Share API integration.",
+    author: "@PRAJAPATI-NEEL-2005",
+    repo: "https://github.com/PRAJAPATI-NEEL-2005/Craftify",
+    submissionDate: "2025-08-11",
+    order: 1
+  },
+  {
     name: "YooAI 🎨",
     url: "https://yooai.co/",
     description: "All-in-one AI creation platform integrating AI-Writer, AI-Video, and free image generation powered by Pollinations. No registration or subscription required — simply enter a prompt to generate high-quality visuals instantly.",

@@ -5,6 +5,14 @@
 
 export const hackAndBuildProjects = [
   {
+    name: "AnyNameGen 🏷️",
+    url: "https://anynamegen.com",
+    description: "Online platform offering a diverse collection of name generators for characters, businesses, pets, games, and creative projects. Comprehensive tool for any naming need.",
+    author: "@gangyeproject",
+    submissionDate: "2025-08-29",
+    order: 1
+  },
+  {
     name: "MultiAgent 🤖",
     url: "https://github.com/LKosoj/multiagent",
     description: "Advanced multi-agent system for solving complex tasks using specialized AI agents. Implements modern architectural patterns with agent factory, manager coordination, and flexible pipelines for Text-to-SQL, research, and content creation. Features next-gen RAG memory with SQLite + ChromaDB, database plugin pattern for multiple DBMS, multi-layer security with LLM-Guard, and extensible tool system with MCP integration. Emphasizes modularity, security, and extensibility.",
