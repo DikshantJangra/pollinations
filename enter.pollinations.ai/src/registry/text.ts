@@ -18,6 +18,18 @@ export const TEXT_MODELS = {
             },
         ],
     },
+    "gpt-5-mini-2025-08-07": {
+        displayName: "OpenAI GPT-5 Mini (Azure)",
+        costType: "per_generation_cost",
+        cost: [
+            {
+                date: PRICING_START_DATE,
+                promptTextTokens: fromDPMT(0.22),
+                promptCachedTokens: fromDPMT(0.03),
+                completionTextTokens: fromDPMT(1.73),
+            },
+        ],
+    },
     "gpt-5-chat-latest": {
         displayName: "OpenAI GPT-5 Chat",
         costType: "per_generation_cost",
