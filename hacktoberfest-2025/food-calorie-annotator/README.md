@@ -106,7 +106,7 @@ const prompt = encodeURIComponent(
   Use a modern nutrition label aesthetic with semi-transparent boxes and clear typography.`
 );
 
-const apiUrl = `https://image.pollinations.ai/prompt/${prompt}?image=${encodeURIComponent(uploadedImageUrl)}&width=1024&height=1024&model=nanobanana&enhance=true&nologo=true&referrer=foodcalloryannotator`;
+const apiUrl = `https://image.pollinations.ai/prompt/${prompt}?image=${encodeURIComponent(uploadedImageUrl)}&width=1024&height=1024&model=nanobanana&enhance=true&nologo=true&referrer=foodcalorieannotator`;
 ```
 
 **Parameters used:**
@@ -115,7 +115,7 @@ const apiUrl = `https://image.pollinations.ai/prompt/${prompt}?image=${encodeURI
 - `model=nanobanana`: Gemini 2.5 Flash Image model for image-to-image generation
 - `enhance=true`: Improves prompt quality for better results
 - `nologo=true`: Clean output without watermark
-- `referrer=foodcalloryannotator`: App tracking for analytics
+- `referrer=foodcalorieannotator`: App tracking for analytics
 
 ---
 

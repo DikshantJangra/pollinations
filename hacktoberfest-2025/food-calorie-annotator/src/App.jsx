@@ -128,7 +128,7 @@ function App() {
 
       // Build the API URL with the uploaded image
       // Using nanobanana model for image-to-image generation with referrer for tracking
-      const apiUrl = `https://image.pollinations.ai/prompt/${prompt}?image=${encodeURIComponent(uploadedImageUrl)}&width=1024&height=1024&model=nanobanana&enhance=true&nologo=true&referrer=foodcalloryannotator`;
+      const apiUrl = `https://image.pollinations.ai/prompt/${prompt}?image=${encodeURIComponent(uploadedImageUrl)}&width=1024&height=1024&model=nanobanana&enhance=true&nologo=true&referrer=foodcalorieannotator`;
 
       console.log('Pollinations API URL:', apiUrl);
       
