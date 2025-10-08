@@ -22,7 +22,7 @@ const client =
 const CATEGORIES = ["Hate", "SelfHarm", "Sexual", "Violence"] as const;
 
 // Severity levels: 0 (safe), 2 (low), 4 (medium), 6 (high)
-const SEVERITY_THRESHOLD = 4; // Block medium and high severity content
+const SEVERITY_THRESHOLD = 2; // Block low, medium and high severity content (maximum safety)
 
 export type ContentSafetyResults = {
     safe: boolean;
