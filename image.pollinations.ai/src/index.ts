@@ -413,6 +413,10 @@ const checkCacheAndGenerate = async (
                     // Seedream uses 120s interval with tier-based concurrency
                     queueConfig = { interval: 120000 }; // 120s interval (2 minutes), cap set by ipQueue based on tier
                     logAuth(`${safeParams.model} model - using 120s interval with tier-based concurrency (seed:1x, flower:1x, nectar:2x)`)
+                } else if (safeParams.model === "gptimage") {
+                    // GPT Image uses 45s interval to prevent Azure policy violations
+                    queueConfig = { interval: 45000 }; // 45s interval, cap set by ipQueue based on tier
+                    logAuth(`${safeParams.model} model - using 45s interval with tier-based concurrency (seed:1x, flower:1x, nectar:2x)`)
                 } else if (hasValidToken) {
                     // Token authentication for other models - 7s minimum interval with tier-based caps
                     queueConfig = { interval: 7000 }; // cap will be set by ipQueue based on tier
