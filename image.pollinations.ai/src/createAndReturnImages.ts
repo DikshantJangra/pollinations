@@ -76,6 +76,17 @@ export type AuthResult = {
 };
 
 /**
+ * Check if user is in the priority users list for restricted models
+ * @param {AuthResult} userInfo - User authentication information
+ * @returns {boolean} - True if user is a priority user
+ */
+function isPriorityUser(userInfo: AuthResult): boolean {
+    const priorityUsers = process.env.PRIORITY_MODEL_USERS?.split(',').map(u => u.trim()) || [];
+    const username = userInfo?.username;
+    return username ? priorityUsers.includes(username) : false;
+}
+
+/**
  * Calculates scaled dimensions while maintaining aspect ratio
  * @param {number} width - Original width
  * @param {number} height - Original height
@@ -1011,16 +1022,16 @@ const generateImage = async (
     }
 
     if (safeParams.model === "seedream") {
-        // Seedream model requires nectar tier or higher (temporarily due to limited credits)
-        if (!hasSufficientTier(userInfo.tier, "nectar")) {
+        // Seedream model is currently restricted to priority users only
+        if (!isPriorityUser(userInfo)) {
             const errorText =
-                "Access to seedream model is currently limited to users in the nectar tier or higher due to limited credits. Seedream will be available again to seed tier users in the next few days. Please authenticate at https://auth.pollinations.ai to get a token or add a referrer.";
+                "Access to seedream model is currently restricted to priority users only. Please contact support if you need access to this model.";
             logError(errorText);
             progress.updateBar(
                 requestId,
                 35,
                 "Auth",
-                "Seedream temporarily requires nectar tier",
+                "Seedream requires priority user access",
             );
             throw new Error(errorText);
         }
